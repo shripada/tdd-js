@@ -12,16 +12,16 @@ assert.equal(x, 10, 'x must be 10')
 
 /**
  * This function reverses the given string
- * @param {string} str string to be reversed 
+ * @param {string} str string to be reversed
  * @returns the reversed version of input string
  */
-function reverse(str){
+function reverse(str) {
   //preconditions
   assert(typeof str === 'string')
 
-  let reversed = '';
+  let reversed = ''
   for (let i = str.length - 1; i >= 0; i--) {
-    reversed += str[i];
+    reversed += str[i]
   }
 
   return reversed
@@ -31,13 +31,20 @@ function reverse(str){
 assert.equal(reverse(''), '', 'reverse of empty string must be a empty string')
 
 // reverse of a vaild string - 1
-assert.equal(reverse('abc'),'cba', 'reverse of abc is cba')
+assert.equal(reverse('abc'), 'cba', 'reverse of abc is cba')
 
 // reverse of a valid string - 2
-assert.equal(reverse('abbacabba'), 'abbacabba', 'reverse of abbacabba is abbacabba')
+assert.equal(
+  reverse('abbacabba'),
+  'abbacabba',
+  'reverse of abbacabba is abbacabba',
+)
 
 // reverse of a number should throw error
-assert.throws(() => reverse(111111111111), 'Passing number must throw error since number is not a vaild arg type')
+assert.throws(
+  () => reverse(111111111111),
+  'Passing number must throw error since number is not a vaild arg type',
+)
 
 /**
  * Checks if the passed in string is a palindrome
@@ -49,9 +56,8 @@ function isPalindrome(string) {
   assert(typeof string === 'string')
 
   let reversed = reverse(string)
-  
-  return reversed === string
 
+  return reversed === string
 }
 
 // empty string is a palindrome
@@ -71,10 +77,10 @@ assert.throws(
 // TODO: implement a function decimalToBinary, which converts a given decimal number to binary representation (in string format)
 // with TDD approach.  Some examples of dec to binary transforms: 10 -> 1010  0  -> 0  4 -> 100
 
-function decimalToBinary(decimal){
+function decimalToBinary(decimal) {
   assert(typeof decimal === 'string')
   assert(decimal !== '')
-  assert.equal(Number.isInteger(parseFloat(decimal)),true)
+  assert.equal(Number.isInteger(parseFloat(decimal)), true)
   return parseInt(decimal).toString(2)
 }
 
@@ -85,11 +91,13 @@ assert.throws(() => decimalToBinary(''), 'empty string is invalid')
 assert.throws(() => decimalToBinary(1111), 'input should be a string')
 
 // pass a invalid string
-assert.throws(() => decimalToBinary('4.1'),'a float number representation must throw error')
+assert.throws(
+  () => decimalToBinary('4.1'),
+  'a float number representation must throw error',
+)
 
 // pass a valid string - 1
-assert.equal(decimalToBinary('4'),'100','binary of 4 should be 100')
+assert.equal(decimalToBinary('4'), '100', 'binary of 4 should be 100')
 
 // pass a valid string - 2
-assert.equal(decimalToBinary('10'),'1010','binary of 10 should be 1010')
-
+assert.equal(decimalToBinary('10'), '1010', 'binary of 10 should be 1010')
