@@ -11,6 +11,35 @@ assert(
 assert.equal(x, 10, 'x must be 10')
 
 /**
+ * This function reverses the given string
+ * @param {string} str string to be reversed 
+ * @returns the reversed version of input string
+ */
+function reverse(str){
+  //preconditions
+  assert(typeof str === 'string')
+
+  let reversed = '';
+  for (let i = str.length - 1; i >= 0; i--) {
+    reversed += str[i];
+  }
+
+  return reversed
+}
+
+// reverse of a empty string
+assert.equal(reverse(''), '', 'reverse of empty string must be a empty string')
+
+// reverse of a vaild string - 1
+assert.equal(reverse('abc'),'cba', 'reverse of abc is cba')
+
+// reverse of a valid string - 2
+assert.equal(reverse('abbacabba'), 'abbacabba', 'reverse of abbacabba is abbacabba')
+
+// reverse of a number should throw error
+assert.throws(() => reverse(111111111111), 'Passing number must throw error since number is not a vaild arg type')
+
+/**
  * Checks if the passed in string is a palindrome
  * @param {string} string to check
  * @returns true if the string is palindrome, false otherwise
@@ -19,18 +48,10 @@ function isPalindrome(string) {
   // precondition
   assert(typeof string === 'string')
 
-  // TODO: refactor the reversing logic into its own function and implement it in TDD using seperate asserts.
-  let reversed = '' //undefined
-  //   for (let ch of string) {
-  //     reversed += ch
-  //   }
-  for (let i = string.length - 1; i >= 0; i--) {
-    reversed += string[i]
-  }
-  if (reversed === string) {
-    return true
-  }
-  return false
+  let reversed = reverse(string)
+  
+  return reversed === string
+
 }
 
 // empty string is a palindrome
