@@ -70,3 +70,26 @@ assert.throws(
 
 // TODO: implement a function decimalToBinary, which converts a given decimal number to binary representation (in string format)
 // with TDD approach.  Some examples of dec to binary transforms: 10 -> 1010  0  -> 0  4 -> 100
+
+function decimalToBinary(decimal){
+  assert(typeof decimal === 'string')
+  assert(decimal !== '')
+  assert.equal(Number.isInteger(parseFloat(decimal)),true)
+  return parseInt(decimal).toString(2)
+}
+
+// pass empty string
+assert.throws(() => decimalToBinary(''), 'empty string is invalid')
+
+// pass number as argument
+assert.throws(() => decimalToBinary(1111), 'input should be a string')
+
+// pass a invalid string
+assert.throws(() => decimalToBinary('4.1'),'a float number representation must throw error')
+
+// pass a valid string - 1
+assert.equal(decimalToBinary('4'),'100','binary of 4 should be 100')
+
+// pass a valid string - 2
+assert.equal(decimalToBinary('10'),'1010','binary of 10 should be 1010')
+
