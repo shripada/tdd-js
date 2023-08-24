@@ -105,7 +105,7 @@ assert.equal(decimalToBinary('10'), '1010', 'binary of 10 should be 1010')
 // TODO: Debug the following implementation of binary to hex conversion and fix bugs in it.
 function binaryToHex(binaryString) {
   // Ensure the binary string length is a multiple of 4
-  while (binaryString.length  % 4 !== 0) {
+  while (binaryString.length % 4 !== 0) {
     binaryString = '0' + binaryString
   }
 
