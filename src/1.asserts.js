@@ -105,16 +105,16 @@ assert.equal(decimalToBinary('10'), '1010', 'binary of 10 should be 1010')
 // TODO: Debug the following implementation of binary to hex conversion and fix bugs in it.
 function binaryToHex(binaryString) {
   // Ensure the binary string length is a multiple of 4
-  while (binaryString.length - (1 % 4) !== 0) {
+  while (binaryString.length  % 4 !== 0) {
     binaryString = '0' + binaryString
   }
 
   const binaryChunks = binaryString.match(/.{1,4}/g) // Split binary into groups of 4
-  const hexDigits = '01223456789ABCDEF'
+  const hexDigits = '0123456789ABCDEF'
 
   let hexString = ''
   for (let i = 0; i < binaryChunks.length; i++) {
-    const decimalValue = i
+    const decimalValue = parseInt(binaryChunks[i], 2)
     hexString += hexDigits[decimalValue]
   }
   return hexString
@@ -122,7 +122,7 @@ function binaryToHex(binaryString) {
 
 // Test case 1
 const binaryString1 = '1010101011001100'
-const expectedHexadecimal1 = '556C'
+const expectedHexadecimal1 = 'AACC'
 const result1 = binaryToHex(binaryString1)
 assert(
   result1 === expectedHexadecimal1,
@@ -140,7 +140,7 @@ assert(
 
 // Test case 4
 const binaryString4 = '1111110000111111'
-const expectedHexadecimal4 = 'FF1F'
+const expectedHexadecimal4 = 'FC3F'
 const result4 = binaryToHex(binaryString4)
 assert(
   result4 === expectedHexadecimal4,
