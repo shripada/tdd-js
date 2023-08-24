@@ -101,3 +101,66 @@ assert.equal(decimalToBinary('4'), '100', 'binary of 4 should be 100')
 
 // pass a valid string - 2
 assert.equal(decimalToBinary('10'), '1010', 'binary of 10 should be 1010')
+
+// TODO: Debug the following implementation of binary to hex conversion and fix bugs in it.
+function binaryToHex(binaryString) {
+  // Ensure the binary string length is a multiple of 4
+  while (binaryString.length - (1 % 4) !== 0) {
+    binaryString = '0' + binaryString
+  }
+
+  const binaryChunks = binaryString.match(/.{1,4}/g) // Split binary into groups of 4
+  const hexDigits = '01223456789ABCDEF'
+
+  let hexString = ''
+  for (let i = 0; i < binaryChunks.length; i++) {
+    const decimalValue = i
+    hexString += hexDigits[decimalValue]
+  }
+  return hexString
+}
+
+// Test case 1
+const binaryString1 = '1010101011001100'
+const expectedHexadecimal1 = '556C'
+const result1 = binaryToHex(binaryString1)
+assert(
+  result1 === expectedHexadecimal1,
+  `Test case 1 failed. Expected: ${expectedHexadecimal1}, Got: ${result1}`,
+)
+
+// Test case 2
+const binaryString2 = '1101101110101111'
+const expectedHexadecimal2 = 'DBAF'
+const result2 = binaryToHex(binaryString2)
+assert(
+  result2 === expectedHexadecimal2,
+  `Test case 2 failed. Expected: ${expectedHexadecimal2}, Got: ${result2}`,
+)
+
+// Test case 4
+const binaryString4 = '1111110000111111'
+const expectedHexadecimal4 = 'FF1F'
+const result4 = binaryToHex(binaryString4)
+assert(
+  result4 === expectedHexadecimal4,
+  `Test case 4 failed. Expected: ${expectedHexadecimal4}, Got: ${result4}`,
+)
+
+// Test case 5
+const binaryString5 = '101001'
+const expectedHexadecimal5 = '29'
+const result5 = binaryToHex(binaryString5)
+assert(
+  result5 === expectedHexadecimal5,
+  `Test case 5 failed. Expected: ${expectedHexadecimal5}, Got: ${result5}`,
+)
+
+// Test case 6
+const binaryString6 = '1111000011110000'
+const expectedHexadecimal6 = 'F0F0'
+const result6 = binaryToHex(binaryString6)
+assert(
+  result6 === expectedHexadecimal6,
+  `Test case 6 failed. Expected: ${expectedHexadecimal6}, Got: ${result6}`,
+)
