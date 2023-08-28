@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
-    "assert": "nodemon ./src/1.asserts.js"
+    "assert": "nodemon ./src/1.asserts.test.js"
   },
   "devDependencies": {
     "eslint": "8.47.0",

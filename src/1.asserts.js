@@ -1,14 +1,4 @@
 import assert from 'assert'
-let x = 10
-assert(x === 10, 'After assigning 10 to x, x must be 10')
-let y = x
-y = 100
-assert(
-  y === 100,
-  'Y must be 100 as there is an explicit assignment of 100 to it',
-)
-
-assert.equal(x, 10, 'x must be 10')
 
 /**
  * This function reverses the given string
@@ -51,7 +41,7 @@ assert.throws(
  * @param {string} string to check
  * @returns true if the string is palindrome, false otherwise
  */
-function isPalindrome(string) {
+export function isPalindrome(string) {
   // precondition
   assert(typeof string === 'string')
 
