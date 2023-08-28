@@ -15,3 +15,15 @@ export function prime(number) {
 
   return true
 }
+
+export function primeSeries(start, end) {
+  assert(typeof start === 'number')
+  assert(typeof end === 'number')
+  const result = []
+
+  for (let i = start; i <= end; i++) {
+    if (prime(i)) result.push(i)
+  }
+
+  return result
+}
