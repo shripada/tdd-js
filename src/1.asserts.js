@@ -50,7 +50,7 @@ assert.throws(
 // TODO: implement a function decimalToBinary, which converts a given decimal number to binary representation (in string format)
 // with TDD approach.  Some examples of dec to binary transforms: 10 -> 1010  0  -> 0  4 -> 100
 
-// TODO: Debug the following implementation of binary to hex conversion and fix bugs in it.
+// TODO: 3.  Debug the following implementation of binary to hex conversion and fix bugs in it.
 function binaryToHex(binaryString) {
   // Ensure the binary string length is a multiple of 4
   while (binaryString.length - (1 % 4) !== 0) {
