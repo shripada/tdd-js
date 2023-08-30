@@ -22,6 +22,20 @@ export function createList() {
       }
       return length
     },
+    nodeAtIndex(index) {
+      let currentIndex = 0
+      let currentNode = this.head
+      if (index >= 0 && index < this.getLength()) {
+        while (currentNode !== null) {
+          if (currentIndex === index) {
+            return currentNode
+          }
+          currentNode = currentNode.next
+          currentIndex++
+        }
+      }
+      return null
+    },
     push(value) {
       const node = {
         value,
@@ -49,12 +63,15 @@ export function createList() {
         this.tail = null
       } else {
         const length = this.getLength()
-        let temp = this.head
-        for (let i = 1; i < length - 1; i++) {
-          temp = temp.next
-        }
-        temp.next = null
-        this.tail = temp
+        // let temp = this.head
+        // for (let i = 0; i < length - 2; i++) {
+        //   temp = temp.next
+        // }
+        // temp.next = null
+        // this.tail = temp
+        const penultimate = this.nodeAtIndex(length - 2)
+        this.tail = penultimate
+        this.tail.next = null
       }
 
       return popped
@@ -115,6 +132,18 @@ export function createList() {
         }
       }
       return stringRep
+    },
+    [Symbol.iterator]: function () {
+      let currentIndex = 0
+      return {
+        next: () => {
+          if (currentIndex > this.getLength()) {
+            currentIndex = this.getLength()
+          }
+          let isDone = currentIndex === this.getLength()
+          return {value: this.nodeAtIndex(currentIndex++), done: isDone}
+        },
+      }
     },
   }
 }

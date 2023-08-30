@@ -1,7 +1,7 @@
 import {test, expect} from 'vitest'
 import {createList} from './4.linked-list.js'
 
-test('Linked list tests', () => {
+test('Creating a linked List', () => {
   expect(createList).toBeDefined()
   const linkedList = createList()
   /*
@@ -77,4 +77,27 @@ test('Linked list tests', () => {
   linkedList.push(500)
   expect(linkedList.tail.value).toBe(500)
   expect(linkedList.toString()).toBe('300->200->300->300->300->500')
+})
+
+test('Test node at index in a list', () => {
+  const linkedList = createList()
+  expect(linkedList.nodeAtIndex(0)).toBeNull()
+  let node = linkedList.push(1)
+  expect(linkedList.nodeAtIndex(0)).toBe(node)
+  linkedList.push(2)
+  node = linkedList.push(3)
+  expect(linkedList.nodeAtIndex(2)).toBe(node)
+  linkedList.push(4)
+})
+
+test('Want to iterate the list', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect(linkedList.toString()).toBe('1->2->3')
+  for (let node of linkedList) {
+    console.log(node.value)
+    expect(node.value).toBeDefined()
+  }
 })
