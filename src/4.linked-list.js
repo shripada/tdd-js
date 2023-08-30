@@ -93,6 +93,8 @@ export function createList() {
       if (index === 0) {
         removed = this.head
         this.head = this.head.next
+      } else if (index === length - 1) {
+        removed = this.pop()
       } else {
         let temp = this.head
         for (let i = 0; i < index - 1; i++) {
