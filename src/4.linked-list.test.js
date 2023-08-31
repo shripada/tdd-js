@@ -53,8 +53,13 @@ test('Want to iterate the list', () => {
   linkedList.push(1)
   linkedList.push(2)
   linkedList.push(3)
-  for (let nextNode of linkedList) {
-    expect(nextNode.value).toBeDefined()
-    console.log(nextNode.value)
+  for (let val of linkedList) {
+    expect(val).toBeDefined()
+    console.log(val)
   }
+  const arr = [...linkedList]
+  console.log(arr)
+  // [1, 2, 3]
+  // expect(arr).toBe([1, 2, 3]) // this will fail with error:  If it should pass with deep equality, replace "toBe" with "toStrictEqual"
+  expect(arr).toEqual([1, 2, 3]) // toBe uses value semantics, it just tries to do a strict equal ===, which wont work in this case as we want to deeply compare two objects
 })

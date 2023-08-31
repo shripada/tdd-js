@@ -114,7 +114,7 @@ function createList() {
           }
           let isDone = currentIndex === that.getLength()
 
-          return {value: that.nodeAtIndex(currentIndex++), done: isDone}
+          return {value: that.nodeAtIndex(currentIndex++)?.value, done: isDone}
         },
       }
     },
