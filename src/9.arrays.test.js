@@ -1,4 +1,7 @@
 test('array basics', () => {
+  // Each array objects inherits from Array.prototype object
+  expect(Object.getPrototypeOf([])).toBe(Array.prototype)
+
   // JS array are untyped. You can mix different type of values
   // create array using literal
   const data = [1, 2, 'three', 4, 5, 6] // mixed values, here number and string
@@ -16,7 +19,7 @@ test('array basics', () => {
   // We can delete an item from array and leave a hole in the array, such arrays are sparse.
   // the length is still inclusive of hole, that means length no longer reflects actual count of items in array
   delete data[1]
-  expect(data.length).toBe(6)
+  expect(data.length).toBe(6) //
   expect(data[1]).toBeUndefined() // Trying to access a deleted item will result in undefined.
 
   // Each array inherits from Array.prototype object that has a lot of methods that facilitate manipulating arrays
@@ -141,11 +144,69 @@ test('mutating array in place', () => {
   expect(removed).toEqual([4]) // 1 item from index 4 is removed
 })
 
-test('manipulating array in an immutable way, original array will intact, modified will be a copy', () => {
+test('manipulating array in an immutable way, original array will intact, modified will be a shallow copy', () => {
   // Welcome to the immutable cousin of the splice toSpliced, prefer this over splice.
   // this API will work only on NodeJS 20 onwards.
   // Refer: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/toSpliced
   let a = [1, 2, 4, 5, 6]
   let modified = a.toSpliced(1, 2, 8) // remove 2 items at index 1, and replace by 8
+  expect(modified).not.toBe(a)
   expect(modified).toEqual([1, 8, 5, 6])
+})
+
+test('The slice() method of Array instances returns a shallow copy of a portion of an array without modifying it.', () => {
+  // slice takes start and end (if not provided end will be the length, it will not be included)
+  // creates a shallow copy and returns that. original array is not modified.
+  const animals = ['ant', 'bison', 'camel', 'duck', 'elephant']
+  // end is not provided, it will be animals.length, i.e 5
+  expect(animals.slice(2)).toEqual(['camel', 'duck', 'elephant'])
+  // check that animals is not modified
+  expect(animals).toEqual(['ant', 'bison', 'camel', 'duck', 'elephant'])
+
+  expect(animals.slice(2, 4)).toEqual(['camel', 'duck']) // items at 2, and 3
+  expect(animals.slice(1, 5)).toEqual(['bison', 'camel', 'duck', 'elephant']) // items at 2, and 3
+  expect(animals.slice(-2)).toEqual(['duck', 'elephant']) // when start is negative, it will be computed as start + array.length
+  expect(animals.slice(-2, -1)).toEqual(['duck']) // start is computed start+array.length, end = end + array.length
+
+  // If end < start, nothing will be returned
+  expect(animals.slice(2, 1)).toEqual([])
+  expect(animals.slice(-2, -3)).toEqual([])
+
+  // if no start or end is provided, then entire array is returned
+  expect(animals.slice()).toEqual(['ant', 'bison', 'camel', 'duck', 'elephant'])
+  expect(animals.slice()).not.toBe(animals)
+})
+
+test('spread operator on array also can help build a shallow copy', () => {
+  const animals = ['ant', 'bison', 'camel', 'duck', 'elephant']
+  const birds = ['parrot', 'sparrow', 'crow', 'hawk']
+  const animaslCopy = [...animals]
+  expect(animaslCopy).toEqual(animals)
+  expect(animaslCopy).not.toBe(animals)
+
+  // We can easily create new copies with spread operator
+  const animalsAndBirds = [...animals, ...birds]
+  expect(animalsAndBirds).toEqual([
+    'ant',
+    'bison',
+    'camel',
+    'duck',
+    'elephant',
+    'parrot',
+    'sparrow',
+    'crow',
+    'hawk',
+  ])
+})
+
+test('array destructuring to create vars for various item or items in the given array', () => {
+  const animals = ['ant', 'bison', 'camel', 'duck', 'elephant']
+  const [ant, bison] = animals
+  expect(ant).toBe('ant')
+  expect(bison).toBe('bison')
+
+  // if we use spread operator in left hand side (lhs) as last arg, then rest of items will be shallow copied into it
+  const [anotherAnt, ...rest] = animals
+  expect(anotherAnt).toBe('ant')
+  expect(rest).toEqual(['bison', 'camel', 'duck', 'elephant'])
 })
