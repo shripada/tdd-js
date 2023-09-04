@@ -1,80 +1,111 @@
 import {test, expect} from 'vitest'
 import {createList} from './4.linked-list.js'
 
-test('Linked list tests', () => {
+test('Test: createList function', () => {
   expect(createList).toBeDefined()
   const linkedList = createList()
-  /*
-        {
-            head: null,
-            tail: null,
-            getLength(), // to return 0 on creation,
-            push(value), // adds node to the end
-            pop() // remove node from end
-        }
-    */
   expect(linkedList).toBeDefined()
   expect(linkedList.head).toBeNull()
   expect(linkedList.tail).toBeNull()
   expect(linkedList.getLength()).toBe(0)
-  expect(linkedList.toString()).toBe('')
-  let nodePushed = linkedList.push(10)
-  expect(linkedList.head).toBe(nodePushed)
-  expect(linkedList.tail).toBe(nodePushed)
+})
+
+test('Test: push method', () => {
+  const linkedList = createList()
+  let node = linkedList.push(1)
+  expect(linkedList.head).toBe(node)
+  expect(linkedList.tail).toBe(node)
+  node = linkedList.push(2)
+  expect(linkedList.getLength()).toBe(2)
+})
+
+test('Test: pop method', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  let lastPushed = linkedList.push(2)
+  let popped = linkedList.pop()
+  expect(popped).toBe(lastPushed)
   expect(linkedList.getLength()).toBe(1)
-  expect(linkedList.toString()).toBe('10')
-  let poppedNode = linkedList.pop()
-  expect(poppedNode.value).toBe(10)
-  expect(poppedNode).toBe(nodePushed)
-  expect(linkedList.getLength()).toBe(0)
-  expect(linkedList.toString()).toBe('')
-  linkedList.push(100)
-  linkedList.push(200)
-  expect(linkedList.toString()).toBe('100->200')
-  poppedNode = linkedList.pop()
-  expect(poppedNode.value).toBe(200)
-  expect(linkedList.toString()).toBe('100')
-  linkedList.push(300)
-  linkedList.push(300)
-  linkedList.push(300)
-  linkedList.push(300)
-  linkedList.push(300)
-  linkedList.push(300)
-  linkedList.push(300)
-  expect(linkedList.getLength()).toBe(8)
-  poppedNode = linkedList.pop()
-  expect(poppedNode.value).toBe(300)
-  expect(linkedList.toString()).toBe('100->300->300->300->300->300->300')
-  linkedList.insertAtIndex(2, 200)
-  expect(linkedList.toString()).toBe('100->300->200->300->300->300->300->300')
-  linkedList.insertAtIndex(0, 200)
-  expect(linkedList.toString()).toBe(
-    '200->100->300->200->300->300->300->300->300',
-  )
-  linkedList.insertAtIndex(8, 200)
-  expect(linkedList.toString()).toBe(
-    '200->100->300->200->300->300->300->300->200->300',
-  )
-  expect(() => linkedList.insertAtIndex(10, 200)).toThrowError()
-  let removedNode = linkedList.removeAtIndex(1)
-  expect(removedNode.value).toBe(100)
-  expect(linkedList.toString()).toBe(
-    '200->300->200->300->300->300->300->200->300',
-  )
-  linkedList.removeAtIndex(0)
-  expect(linkedList.toString()).toBe('300->200->300->300->300->300->200->300')
-  linkedList.removeAtIndex(4)
-  expect(linkedList.toString()).toBe('300->200->300->300->300->200->300')
-  removedNode = linkedList.removeAtIndex(6)
-  expect(linkedList.toString()).toBe('300->200->300->300->300->200')
-  expect(removedNode.value).toBe(300)
-  expect(() => linkedList.removeAtIndex(10)).toThrowError()
+})
+
+test('Test: toString method', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect(linkedList.toString()).toBe('1->2->3')
+})
+
+test('Test: nodeAtIndex method', () => {
+  const linkedList = createList()
+  expect(linkedList.nodeAtIndex(0)).toBeNull()
+  let node = linkedList.push(1)
+  expect(linkedList.nodeAtIndex(0)).toBe(node)
+  linkedList.push(2)
+  node = linkedList.push(3)
+  expect(linkedList.nodeAtIndex(2)).toBe(node)
+})
+
+test('Test: insertAtIndex method', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect(linkedList.toString()).toBe('1->2->3')
+  let inserted = linkedList.insertAtIndex(0, 0)
+  expect(linkedList.toString()).toBe('0->1->2->3')
+  expect(linkedList.head).toBe(inserted)
+  linkedList.insertAtIndex(3, 0)
+  expect(linkedList.toString()).toBe('0->1->2->0->3')
+  linkedList.insertAtIndex(2, 0)
+  expect(linkedList.toString()).toBe('0->1->0->2->0->3')
+  expect(() => linkedList.insertAtIndex(-1, 100)).toThrowError()
+  expect(() => linkedList.insertAtIndex(6, 100)).toThrowError()
+})
+
+test('Test: removeAtIndex method', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect(linkedList.toString()).toBe('1->2->3')
+  let removed = linkedList.removeAtIndex(0)
+  expect(removed.value).toBe(1)
+  expect(linkedList.toString()).toBe('2->3')
+  linkedList.push(2)
+  linkedList.push(3)
+  removed = linkedList.removeAtIndex(3)
+  expect(removed.value).toBe(3)
+  expect(linkedList.toString()).toBe('2->3->2')
+  removed = linkedList.removeAtIndex(1)
+  expect(removed.value).toBe(3)
+  expect(linkedList.toString()).toBe('2->2')
   expect(() => linkedList.removeAtIndex(-1)).toThrowError()
-  removedNode = linkedList.removeAtIndex(5)
-  expect(removedNode.value).toBe(200)
-  expect(linkedList.toString()).toBe('300->200->300->300->300')
-  expect(linkedList.tail.value).toBe(300)
-  linkedList.push(500)
-  expect(linkedList.tail.value).toBe(500)
-  expect(linkedList.toString()).toBe('300->200->300->300->300->500')
+  expect(() => linkedList.removeAtIndex(2)).toThrowError()
+})
+
+test('Test: Iterate the Linked List using for...of loop', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  for (let elem of linkedList) {
+    expect(elem).toBeDefined()
+  }
+})
+
+test('Test: Array.from on Linked List', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect(Array.from(linkedList)).toEqual([1, 2, 3])
+})
+
+test('Test: Spread operator on Linked List', () => {
+  const linkedList = createList()
+  linkedList.push(1)
+  linkedList.push(2)
+  linkedList.push(3)
+  expect([...linkedList]).toEqual([1, 2, 3])
 })

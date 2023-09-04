@@ -5,10 +5,7 @@
  *  value: <some value>,
  *  next: <a reference to another list node>
  * }
- * And for the users of such a list, we need a wrapper object which is going to maintain
- * the link to the head and tail of such a list of nodes. And also it should help pushing and popping
- * nodes, and also
- * @returns
+ * @returns Linked List
  */
 export function createList() {
   return {
@@ -21,6 +18,20 @@ export function createList() {
         length++
       }
       return length
+    },
+    nodeAtIndex(index) {
+      let currentIndex = 0
+      let currentNode = this.head
+      if (index >= 0 && index < this.getLength()) {
+        while (currentNode !== null) {
+          if (currentIndex === index) {
+            return currentNode
+          }
+          currentNode = currentNode.next
+          currentIndex++
+        }
+      }
+      return null
     },
     push(value) {
       const node = {
@@ -40,21 +51,17 @@ export function createList() {
       }
 
       return node
-    }, // should create a node and insert to the end,
+    },
     pop() {
-      // should return the last node
       const popped = this.tail
       if (this.head === this.tail) {
         this.head = null
         this.tail = null
       } else {
         const length = this.getLength()
-        let temp = this.head
-        for (let i = 1; i < length - 1; i++) {
-          temp = temp.next
-        }
-        temp.next = null
-        this.tail = temp
+        const penultimate = this.nodeAtIndex(length - 2)
+        this.tail = penultimate
+        this.tail.next = null
       }
 
       return popped
@@ -73,13 +80,9 @@ export function createList() {
         node.next = this.head
         this.head = node
       } else {
-        let temp = this.head
-        for (let i = 0; i < index - 1; i++) {
-          temp = temp.next
-        }
-
-        node.next = temp.next
-        temp.next = node
+        let prevNode = this.nodeAtIndex(index - 1)
+        node.next = prevNode.next
+        prevNode.next = node
       }
 
       return node
@@ -96,12 +99,9 @@ export function createList() {
       } else if (index === length - 1) {
         removed = this.pop()
       } else {
-        let temp = this.head
-        for (let i = 0; i < index - 1; i++) {
-          temp = temp.next
-        }
-        removed = temp.next
-        temp.next = temp.next.next
+        let prevNode = this.nodeAtIndex(index - 1)
+        removed = prevNode.next
+        prevNode.next = prevNode.next.next
       }
       return removed
     },
@@ -115,6 +115,18 @@ export function createList() {
         }
       }
       return stringRep
+    },
+    [Symbol.iterator]: function () {
+      let currentIndex = 0
+      return {
+        next: () => {
+          if (currentIndex > this.getLength()) {
+            currentIndex = this.getLength()
+          }
+          let isDone = currentIndex === this.getLength()
+          return {value: this.nodeAtIndex(currentIndex++)?.value, done: isDone}
+        },
+      }
     },
   }
 }
