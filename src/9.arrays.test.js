@@ -19,22 +19,23 @@ test('array basics', () => {
   // We can delete an item from array and leave a hole in the array, such arrays are sparse.
   // the length is still inclusive of hole, that means length no longer reflects actual count of items in array
   delete data[1]
-  expect(data.length).toBe(6) //
+  expect(data.length).toBe(6)
+  expect(data).toEqual([1, undefined, 'three', 4, 5, 6])
   expect(data[1]).toBeUndefined() // Trying to access a deleted item will result in undefined.
-
-  // Each array inherits from Array.prototype object that has a lot of methods that facilitate manipulating arrays
-  expect(Object.getPrototypeOf(data)).toBe(Array.prototype)
 
   // Writing to array, just use [] operator and pass index (zero based)
   data[0] = 100
 
   // trying to set a value beyond current bounds is going to turn the  array into sparse, the length will be 100
-  data[100] = 100
+  data[100] = 100 // [1, undefined, 'three', 4, 5, 6, undefined, undefined......undefined, 100]
   // items between index 6 to 99 are all undefined.
   expect(data[6]).toBeUndefined()
   expect(data[99]).toBeUndefined()
   expect(data[100]).toBe(100)
   expect(data.length).toBe(101)
+
+  data.length = 6
+  expect(data).toEqual([100, undefined, 'three', 4, 5, 6])
 
   // the index can be an expression that evals to a number
   let n = 10
@@ -45,18 +46,19 @@ test('array basics', () => {
   expect(typeof data).toBe('object') // yes typeof on an array will return 'object'.
   // Need to use Array.isArray method
   expect(Array.isArray(data)).toBeTruthy()
+  expect(Array.isArray({})).toBeFalsy()
 
   // using a non number as value to index will end up introduce that as a key value - just like in an object
   data['name'] = 'something' //this has no bearing on the array length.
   expect(data.name).toEqual('something')
-  expect(data.length).toBe(101) // length is still 101
+  expect(data.length).toBe(12) // length is still 12
 })
 
 test('create using Array constructor', () => {
   let numbers = new Array(10) // create an array of size 10, array is sparse
   expect(numbers.length).toBe(10)
   // all items are undefined by default, we just check a random item and prove that it is undefined
-  let randomIndex = Math.floor(Math.random() * 10)
+  let randomIndex = Math.floor(Math.random() * 10) // randomBetween(0, 10)
   expect(numbers[randomIndex]).toBeUndefined()
 
   // assign values
@@ -76,11 +78,24 @@ test('create using Array constructor', () => {
 
   const anIterable = {
     [Symbol.iterator]: function* () {
+      // Generator is a factory function, when called will return an iterator
       // a generator function!
       for (let i = 0; i < 10; i++) {
         yield i
       }
     },
+
+    // [Symbol.iterator]: function () {
+    //   let count = 0
+    //   return {
+    //     next() {
+    //       return {
+    //         value: count,
+    //         done: count++ >= 10,
+    //       }
+    //     },
+    //   }
+    // },
   }
 
   const arrayFromIterable = Array.from(anIterable)
@@ -93,7 +108,7 @@ test('shallow copying arrays using spread operator', () => {
   const anotherArr = [...arr] // shallow copy creates a new array in memory. but members are copied in a shallow manner
   expect(arr).toEqual(anotherArr)
   // Shallow copy means, any objects will be copied by reference and no deep copy takes place
-  expect(arr[5]).toBe(anotherArr[5])
+  expect(arr[5]).toBe(anotherArr[5]) // ===
 })
 
 test('mutating array in place', () => {
@@ -140,7 +155,7 @@ test('mutating array in place', () => {
   // Splice takes negative values for index, the actual index will be computed
   // length - abs(index) in that case
   let d = [1, 2, 3, 4, 5]
-  removed = d.splice(-2, 1) // length - 2  (6-2) = 4.
+  removed = d.splice(-2, 1) // index + array.length
   expect(removed).toEqual([4]) // 1 item from index 4 is removed
 })
 
