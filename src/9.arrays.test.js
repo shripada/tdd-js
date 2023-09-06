@@ -187,7 +187,7 @@ test('The slice() method of Array instances returns a shallow copy of a portion 
   expect(animals.slice(2, 1)).toEqual([])
   expect(animals.slice(-2, -3)).toEqual([])
 
-  // if no start or end is provided, then entire array is returned
+  // if no start or end is provided, then entire array is returned as a shallow copy
   expect(animals.slice()).toEqual(['ant', 'bison', 'camel', 'duck', 'elephant'])
   expect(animals.slice()).not.toBe(animals)
 })
@@ -217,6 +217,7 @@ test('spread operator on array also can help build a shallow copy', () => {
 test('array destructuring to create vars for various item or items in the given array', () => {
   const animals = ['ant', 'bison', 'camel', 'duck', 'elephant']
   const [ant, bison] = animals
+
   expect(ant).toBe('ant')
   expect(bison).toBe('bison')
 
