@@ -77,5 +77,5 @@ test('string representation utf-16, surrogate pairs', () => {
 })
 
 test('combining marks', () => {
-  //Combining mark is a character that applies to the precedent base character to create a new grapheme
+  // Combining mark is a character that applies to the precedent base character to create a new grapheme
 })
