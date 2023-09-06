@@ -69,13 +69,12 @@ test('string representation utf-16, surrogate pairs', () => {
   // javascript has \u{}  notation that can create the literal using directly the unicode value.
   grin = `\u{1F600}` // Takes care of internally converting into appropriate surrogate pairs.
   expect(grin).toBe('😀')
-
-  let cafe1 = 'cafe\u0301'
-  let cafe2 = 'cafe\u{0301}'
-  expect(cafe1).toBe(cafe2)
-  expect(cafe1).toBe('café')
 })
 
 test('combining marks', () => {
   // Combining mark is a character that applies to the precedent base character to create a new grapheme
+  let cafe1 = 'cafe\u0301'
+  let cafe2 = 'cafe\u{0301}'
+  expect(cafe1).toBe(cafe2)
+  expect(cafe1).toBe('café')
 })
