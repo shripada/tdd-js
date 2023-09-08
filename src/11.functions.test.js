@@ -390,5 +390,91 @@ test('mapping - transforming one collection into another', () => {
   // A puzzle, now let us say that, we need to prefix the college name to all student's full name.
   // lets assume that all students belong to the college 'Trinity'. But however, the college name is
   // not available in student's objects. This will need to be supplied to transform function somehow.
-  // we dont want seperate transform functions to be handcoded for different college names.
+  // we don't want separate transform functions to be handcoded for different college names.
+})
+
+test('filtering elements in a collection', () => {
+  // it is a most recurring problem that we should be able to filter
+  // out items in an array satisfying a criteria
+
+  // Lets look at couple of such examples.
+  // 1. filtering all odd numbers in an array of numbers
+  function filterOddNums(numbers) {
+    let result = []
+    let isOdd = (num) => num % 2
+    for (let num of numbers) {
+      if (isOdd(num)) {
+        result.push(num)
+      }
+    }
+    return result
+  }
+  expect(filterOddNums([1, 2, 3, 4])).toEqual([1, 3])
+
+  //2. Filtering all students scoring more than 80 marks
+  const students = [
+    {
+      firstName: 'John',
+      lastName: 'Doe',
+      score: 86,
+    },
+    {
+      firstName: 'Jane',
+      lastName: 'Smith',
+      score: 75,
+    },
+    {
+      firstName: 'Alice',
+      lastName: 'Johnson',
+      score: 92,
+    },
+    {
+      firstName: 'Bob',
+      lastName: 'Brown',
+      score: 78,
+    },
+    {
+      firstName: 'Eva',
+      lastName: 'Williams',
+      score: 95,
+    },
+    {
+      firstName: 'Michael',
+      lastName: 'Davis',
+      score: 88,
+    },
+    {
+      firstName: 'Olivia',
+      lastName: 'Garcia',
+      score: 70,
+    },
+    {
+      firstName: 'William',
+      lastName: 'Jones',
+      score: 89,
+    },
+    {
+      firstName: 'Sophia',
+      lastName: 'Wilson',
+      score: 91,
+    },
+    {
+      firstName: 'Daniel',
+      lastName: 'Martinez',
+      score: 82,
+    },
+    // Add more student objects with their respective scores
+  ]
+
+  function filterStudentsScoringGreaterThan80(students) {
+    let result = []
+    let isScoreGreaterThan80 = (student) => student.score > 80
+    for (let student of students) {
+      if (isScoreGreaterThan80(student)) {
+        result.push(student)
+      }
+    }
+    return result
+  }
+  expect(filterStudentsScoringGreaterThan80(students))
 })
