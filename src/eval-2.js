@@ -60,7 +60,10 @@ export function evalExpression(expression) {
     operandStack.push(operand)
   }
 
-  // We need to evaluate the expression
+  // We need to evaluate the expression. During evaluation, we need to take care
+  // we work in reverse order on the stacks (or in principle should have reversed the operator and operator stacks)
+  // The reason is that the negation (likewise division too) is not commutative, so we have to operate from left to right.
+
   // we repeatedly pop an operator, and try to apply it by popping two operands needed.
   // if no enough operands, that is an error
   // at the end operand stack should have only one item in it and it is the answer.

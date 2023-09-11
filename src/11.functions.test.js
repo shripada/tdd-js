@@ -93,7 +93,51 @@
 // }
 
 // const doubleArr = (num) => num * 2
+test('function calling itself - recursion', () => {
+  // A function calling itself causes a recursion
+  // this needs to be controlled, otherwise, it will be an infinite recursion
+  function f() {
+    f() // this will end up calling itself, until system's call stack hits its limit
+  }
 
+  // There are quite a lot of mathematical problems that are recursive.
+  // consider factorial for example.
+  function factorial(n) {
+    if (n === 0) {
+      // this is  the base case, that guards against an infinite call to itself
+      return 1
+    }
+    return n * factorial(n - 1)
+  }
+
+  // using arrow function.
+  const fact = (n) => {
+    if (n === 0) {
+      // this is  the base case, that guards against an infinite call to itself
+      return 1
+    }
+    return n * fact(n - 1)
+  }
+  // fibonacci number
+  // base case
+  // fib(0): 0
+  // fib(1): 1
+  // recurring case: fib(2) = fib(1) + fib(0)
+  const fib = (n) => {
+    if (n === 0) return 0
+    if (n === 1) return 1
+    return fib(n - 1) + fib(n - 2)
+  }
+  // An iterative solution of the above problem would be lengthy
+  const fibIterative = (n) => {
+    if (n === 0) return 0
+    if (n === 1) return 1
+    let fibs = [0, 1]
+    for (let i = 2; i < n; i++) {
+      fibs.push(fibs[fibs.length - 1] + fibs[fibs.length - 2])
+    }
+  }
+})
 test('closure mechanism - point free functions', () => {
   // A function that takes atleast one function argument or return a function as return value
   // is known as Higher order function.
