@@ -94,6 +94,149 @@
 
 // const doubleArr = (num) => num * 2
 
+test('recursive functions', () => {
+  function foo(number) {
+    // base conditions
+    if (number === 0) {
+      return
+    }
+    return foo(number - 1) // call self
+  }
+
+  const fooA = (number) => {
+    // base conditions must be present
+    // and some point of call sequence, these need to hit and we must
+    // be stopping the recursion.
+    if (number === 0) {
+      return
+    }
+    return fooA(number - 1) // call self
+  }
+
+  foo(10)
+
+  // factorial of a number
+  // fact(0) : 1
+  // fact(1) : 1 * fact(0)
+  // fact(2) : 2 * fact(1)
+  // fact (3) : 3 * fact(2)
+  // fact (4) : 4 * 3 * 2 * fact(1)
+  // fact (n) : n * fact(n-1)
+  function fact(number) {
+    // base conditions
+    if (number === 0) {
+      return 1
+    }
+    return number * fact(number - 1)
+  }
+
+  function factI(number) {
+    if (number === 0) return 1
+
+    let factorial = number
+    for (let i = number - 1; i > 0; i--) {
+      factorial = factorial * i
+    }
+    return factorial
+  }
+
+  // fib(0): 0
+  // fib(1): 1
+  // fib(2): fib(1) + fib(2)
+  // fib(3): fib(2) + fib(1)
+  // fib(4): fib(3) + fib(2)
+  //
+  // fib(n): fib(n-1) + fib(n-2)
+  function fib(n) {
+    if (n === 0) return 0
+    if (n === 1) return 1
+
+    return fib(n - 1) + fib(n - 2)
+  }
+
+  expect(fib(0)).toBe(0)
+  expect(fib(1)).toBe(1)
+  expect(fib(2)).toBe(1)
+  expect(fib(3)).toBe(2)
+  expect(fib(4)).toBe(3)
+  expect(fib(5)).toBe(5)
+  expect(fib(6)).toBe(8) // fib(5)  fib(4)
+
+  // An iterative solution for fib
+  function fibI(n) {
+    const fibs = [0, 1]
+    if (n === 0 || n === 1) {
+      return fibs[n]
+    }
+    for (let i = 2; i <= n; i++) {
+      fibs[i] = fibs[i - 1] + fibs[i - 2]
+    }
+    return fibs[n]
+  }
+
+  let timeStamp = performance.now() // Date.now()
+  fib(40)
+  let timeTaken = performance.now() - timeStamp
+  console.log('Time taken by recursive fib', timeTaken)
+
+  timeStamp = performance.now()
+  fibI(40)
+  timeTaken = performance.now() - timeStamp
+  console.log('Time taken by iterative fib', timeTaken)
+
+  // Attempt with a closure
+  function fibonacci(n) {
+    const fibs = [0, 1]
+    function fibInternal(n) {
+      if (fibs[n]) {
+        return fibs[n]
+      } else {
+        for (let i = 2; i <= n; i++) {
+          fibs[i] = fibs[i - 1] + fibs[i - 2]
+        }
+        return fibs[n]
+      }
+    }
+    return fibInternal
+  }
+
+  fibonacci(3)
+  fibonacci(4)
+
+  // We need to pass the cache to the function
+  function fibMemoized(n, cache) {
+    if (n === 0 || n === 1) {
+      return cache[n]
+    }
+
+    if (cache[n]) {
+      return cache[n]
+    }
+
+    for (let i = 2; i <= n; i++) {
+      if (!cache[i]) {
+        cache[i] = cache[i - 1] + cache[i - 2]
+      }
+    }
+    return cache[n]
+  }
+  const cache = [0, 1]
+  //   fibMemoized(6, cache)
+  //   fibMemoized(7, cache)
+
+  timeStamp = performance.now()
+  fibMemoized(40, cache)
+  timeTaken = performance.now() - timeStamp
+
+  console.log('Memoized version of fib', timeTaken)
+
+  timeStamp = performance.now()
+  fibMemoized(40, cache)
+  timeTaken = performance.now() - timeStamp
+
+  console.log('Memoized version of fib again with same input 40', timeTaken)
+})
+
 test('closure mechanism - point free functions', () => {
   // A function that takes atleast one function argument or return a function as return value
   // is known as Higher order function.
