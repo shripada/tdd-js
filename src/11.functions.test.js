@@ -174,6 +174,14 @@ test('recursive functions', () => {
     return fibs[n]
   }
 
+  expect(fibI(0)).toBe(0)
+  expect(fibI(1)).toBe(1)
+  expect(fibI(2)).toBe(1)
+  expect(fibI(3)).toBe(2)
+  expect(fibI(4)).toBe(3)
+  expect(fibI(5)).toBe(5)
+  expect(fibI(6)).toBe(8) // fib(5)  fib(4)
+
   let timeStamp = performance.now() // Date.now()
   fib(40)
   let timeTaken = performance.now() - timeStamp
@@ -185,23 +193,32 @@ test('recursive functions', () => {
   console.log('Time taken by iterative fib', timeTaken)
 
   // Attempt with a closure
-  function fibonacci(n) {
-    const fibs = [0, 1]
+  function createFib() {
+    const cache = [0, 1]
     function fibInternal(n) {
-      if (fibs[n]) {
-        return fibs[n]
+      if (cache[n]) {
+        return cache[n]
       } else {
         for (let i = 2; i <= n; i++) {
-          fibs[i] = fibs[i - 1] + fibs[i - 2]
+          if (cache[i] === undefined) {
+            // compute only if not found in cache
+            cache[i] = cache[i - 1] + cache[i - 2]
+          }
         }
-        return fibs[n]
+        return cache[n]
       }
     }
     return fibInternal
   }
+  const fibC = createFib()
 
-  fibonacci(3)
-  fibonacci(4)
+  expect(fibC(0)).toBe(0)
+  expect(fibC(1)).toBe(1)
+  expect(fibC(2)).toBe(1)
+  expect(fibC(3)).toBe(2)
+  expect(fibC(4)).toBe(3)
+  expect(fibC(5)).toBe(5)
+  expect(fibC(6)).toBe(8) // fib(5)  fib(4)
 
   // We need to pass the cache to the function
   function fibMemoized(n, cache) {
