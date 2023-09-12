@@ -192,7 +192,12 @@ test('recursive functions', () => {
   timeTaken = performance.now() - timeStamp
   console.log('Time taken by iterative fib', timeTaken)
 
-  // Attempt with a closure
+  // It is clear that computing fibonacci can become costly as the index becomes
+  // bigger. Repeatedly calling fib with a known large number will be very slow.
+  // We can speed up this by employing a cache. We are using a simple HOF, that
+  // will maintain a cache and the function it returns closes over it.
+  // since we always store the value of a asked fibonacci, we will be able to return it
+  // directly from cache when sought next time. So actual computation will happen only once.
   function createFib() {
     const cache = [0, 1]
     function fibInternal(n) {
@@ -220,7 +225,7 @@ test('recursive functions', () => {
   expect(fibC(5)).toBe(5)
   expect(fibC(6)).toBe(8) // fib(5)  fib(4)
 
-  // We need to pass the cache to the function
+  // Cache can also reside outside.
   function fibMemoized(n, cache) {
     if (n === 0 || n === 1) {
       return cache[n]
@@ -238,8 +243,8 @@ test('recursive functions', () => {
     return cache[n]
   }
   const cache = [0, 1]
-  //   fibMemoized(6, cache)
-  //   fibMemoized(7, cache)
+  fibMemoized(6, cache)
+  fibMemoized(7, cache)
 
   timeStamp = performance.now()
   fibMemoized(40, cache)
