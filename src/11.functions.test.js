@@ -259,6 +259,48 @@ test('recursive functions', () => {
   console.log('Memoized version of fib again with same input 40', timeTaken)
 })
 
+test('tail recursion', () => {
+  // this is a novel way of writing recursive functions
+  // such that the last expression must be the recursive call to self.
+
+  function fact(n) {
+    // if (n === 1) {
+    //   return 1
+    // }
+    // return n * fact(n - 1) // 4 * fact(3) -> 4 * 3 * fact(2) -> 4 * 3 * 2* fact(1)
+    return (function factInt(partialFact, count) {
+      if (count <= 1) {
+        return partialFact
+      }
+      return factInt(count * partialFact, count - 1) // In tail recursion, last expression must be the recursive call to self.
+    })(1, n) // Immediately Invoked Function Expression - IIFE
+  }
+  expect(fact(0)).toBe(1)
+  expect(fact(4)).toBe(24)
+  expect(fact(5)).toBe(120)
+
+  function fibC(n) {
+    if (n === 0) return 0
+    if (n === 1) return 1
+    // return fib(n-1) + fib(n-2)
+    function fibInternal(f1, f2, count) {
+      if (count === n) {
+        return f2
+      }
+      return fibInternal(f2, f1 + f2, count + 1)
+    }
+    return fibInternal(1, 1, 2)
+  }
+
+  expect(fibC(0)).toBe(0)
+  expect(fibC(1)).toBe(1)
+  expect(fibC(2)).toBe(1)
+  expect(fibC(3)).toBe(2)
+  expect(fibC(4)).toBe(3)
+  expect(fibC(5)).toBe(5)
+  expect(fibC(6)).toBe(8) // fib(5)  fib(4)
+})
+
 test('closure mechanism - point free functions', () => {
   // A function that takes atleast one function argument or return a function as return value
   // is known as Higher order function.
@@ -277,7 +319,7 @@ test('closure mechanism - point free functions', () => {
   const add100 = adder(100) //add100 is a point free function.
   expect(add100(100)).toBe(200)
 
-  // another example of higher order function, this time we pass a function to higher order function
+  // another example of higher order function, this time we pass a functions to higher order function
   const multiAdder = (initialValue, ...adders) => {
     let final = initialValue
     adders.forEach((adder) => (final = adder(final))) // forEach is an inbuilt HOF, as it takes a callback function as its arg
@@ -285,6 +327,7 @@ test('closure mechanism - point free functions', () => {
   }
 
   expect(multiAdder(10, add2, add100)).toBe(112)
+  expect(multiAdder(10, add2, add100, adder(200))).toBe(312)
 
   // Closures often used to protect private data
   const createCounter = () => {
@@ -362,16 +405,28 @@ test('curried functions and partial application', () => {
     console.log(logged)
     return logged
   }
+
+  log('DEBUG', 'functions', 'something happened')
+  log('DEBUG', 'functions', 'fib called')
+  log('DEBUG', 'functions', 'fact called')
+  log('DEBUG', 'functions', 'something happened')
+  logDebugInFunctions('fib called')
+  function logDebugInFunctions(message) {
+    log('DEBUG', 'functions', message)
+  }
   // Now to create a debugLog to fix logLevel as DEBUG, all that we need to do first is come up with a curried version of the log
   // and then do a partial application to apply debug level
   const logC = (logLevel) => {
     return (moduleName) => {
       return (message) => {
-        return log(logLevel, moduleName, message)
+        // return log(logLevel, moduleName, message)
+        const logged = `${logLevel}: ${moduleName}: ${message}`
+        console.log(logged)
+        return logged
       }
     }
   }
-  const debugLog = logC('DEBUG')
+  const debugLog = logC('DEBUG') // Partial application
   expect(typeof debugLog).toBe('function')
   const debugLogMath = debugLog('Math') // We could easily create debugLogMath using partial application.
   expect(debugLogMath('some log message')).toBe('DEBUG: Math: some log message')
@@ -387,7 +442,7 @@ test('function composition and piping', () => {
 
   // We can create a special utility function called compose, which will help us to create composition of two functions
   // the pre condition for compose is f: a -> b, g: c -> a, basically f should be accepting what g is producing.
-  let compose = (f, g) => (x) => f(g(x))
+  let compose = (f, g) => (x) => f(g(x)) // g: a -> b f: b ->c e: c ->d
 
   // lets recreate the above functions, using now compose
   let incrementAndDoubleC = compose(double, increment) //order of functions is reverse, please note
@@ -397,7 +452,7 @@ test('function composition and piping', () => {
   expect(doubleDouble(10)).toBe(doubleDoubleC(10)).toBe(40)
 
   // But we don't need to stop at composing just 2 functions, we can do better.
-  // how about composing functions within an array?
+  // how about composing more than two functions?
   compose =
     (...functions) =>
     (x) => {
@@ -420,7 +475,7 @@ test('function composition and piping', () => {
     console.log(label + ': ' + message)
     return message
   }
-  const afterIncrement = log('after increment')
+  const afterIncrement = log('after increment') //partial application.
   const afterDouble = log('after double')
   const incrementAndDoubleWithLog = compose(
     afterDouble,
@@ -445,7 +500,7 @@ test('function composition and piping', () => {
       return accumulated
     }
 
-  let incrementAndDoubleP = pipe(increment, double)
+  let incrementAndDoubleP = pipe(increment, afterIncrement, double, afterDouble)
   let doubleDoubleP = pipe(double, double)
   expect(incrementAndDoubleP(10)).toBe(22)
   expect(doubleDoubleP(10)).toBe(40)
@@ -532,8 +587,10 @@ test('mapping - transforming one collection into another', () => {
   // We can do this by adding this as a method on Array.prototype
   Array.prototype['map'] = function (transform) {
     const result = []
+    let index = 0
     for (let item of this) {
-      result.push(transform(item))
+      result.push(transform(item, index, this))
+      index += 1
     }
     return result
   }
@@ -566,7 +623,7 @@ test('filtering elements in a collection', () => {
   // 1. filtering all odd numbers in an array of numbers
   function filterOddNums(numbers) {
     let result = []
-    let isOdd = (num) => num % 2
+    let isOdd = (num) => num % 2 // Any function that produces a boolean result is a predicate.
     for (let num of numbers) {
       if (isOdd(num)) {
         result.push(num)
@@ -642,4 +699,68 @@ test('filtering elements in a collection', () => {
     return result
   }
   expect(filterStudentsScoringGreaterThan80(students))
+})
+
+test('reduce HOF', () => {
+  // Finding sum of numbers in an array
+  const numbers = [1, 2, 3, 4, 5, 6] // sum of these numbers must be 21
+  let sum = 0 // initial value.
+  numbers.forEach((num) => (sum += num)) // each iteration of loop, he uses the previously accumulated value, and modifies it and returns the modified value
+  expect(sum).toBe(21)
+
+  // Find frequency of occurences of each char in the given string.
+  const message = 'Hello functional programming'
+  const frequency = {} // initial value. Map could be better choice.
+
+  for (let c of message) {
+    // each step will involve consuming the hash table already accumulated
+    // as we want to check if c already is in the hash table, if so
+    // we want to increment its count, otherwise start with a value 1
+    if (frequency[c]) {
+      frequency[c] += 1
+    } else {
+      frequency[c] = 1
+    }
+  }
+
+  expect(frequency).toEqual({
+    ' ': 2,
+    H: 1,
+    a: 2,
+    c: 1,
+    e: 1,
+    f: 1,
+    g: 2,
+    i: 2,
+    l: 3,
+    m: 2,
+    n: 3,
+    o: 3,
+    p: 1,
+    r: 2,
+    t: 1,
+    u: 1,
+  })
+
+  // It is very clear that all the above problems have one thing in common
+  // they all start with an initial value
+  // then loop through the collection, for each item they do some operation and modify the accumulated
+  // value and pass it on to the next iteration.
+  // once loop exits, the accumulated value has the expected result.
+
+  function reduce(array, initialValue, accumulator) {
+    // accumulator must be a function. it must receive previously accumulated value and reference to current item
+    // (accumulated, currentItem) => { // do something and produce a new accumulated value and return it}
+    // note: never directly mutate the accumulated value especially when it is a non primitive
+    let accumulated = initialValue
+    let index = 0
+    for (let item of array) {
+      accumulated = accumulator(accumulated, item, index, array)
+      index += 1
+    }
+    return accumulated
+  }
+
+  // finding sum using our reduce
+  expect(reduce(numbers, 0, (accumulated, num) => accumulated + num)).toBe(21)
 })
