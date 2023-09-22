@@ -23,9 +23,68 @@ function processArgs() {}
  * @returns the size of the path / folder passed. Throws an exception if the path is invalid or no permissions.
  *
  */
-export function sizeOfFileAtPath(path, callback) {
-  // Find if path is a file or folder
-  setTimeout(() => callback(0), 1000) //this is async
-}
 
 //processArgs()
+
+export function sizeOfFileAtPathSync(path) {
+  const stat = fs.statSync(path)
+  console.log(stat)
+  if (stat.isFile()) {
+    return stat.size // base case
+  } else if (stat.isDirectory()) {
+    // get all files in it, and add up their size and return.
+    const files = fs.readdirSync(path)
+    console.log(files)
+    let size = 0
+    for (let file of files) {
+      const pathOfFile = path + '/' + file
+      console.log(pathOfFile)
+      size += sizeOfFileAtPathSync(pathOfFile)
+    }
+    return size
+  }
+}
+
+export function sizeOfFileAtPathAsync(path, callback) {
+  // Find if path is a file or folder
+  fs.stat(path, (err, stats) => {
+    if (path.includes('node_modules') || path.includes('.git')) {
+      callback(0)
+      return
+    }
+    if (err) {
+      callback(0, err)
+      return
+    }
+    if (stats.isFile()) {
+      callback(stats.size)
+    } else if (stats.isDirectory()) {
+      fs.readdir(path, (err, files) => {
+        if (err) {
+          callback(0, err)
+        } else {
+          // accumulate the size by finding the size of each file and add it up
+          let size = 0
+          let fileCount = 0
+          for (let file of files) {
+            const pathOfFile = path + '/' + file
+            sizeOfFileAtPathAsync(pathOfFile, (sizeIn, err) => {
+              fileCount += 1
+              if (err) {
+                console.log(err)
+                //throw err
+                callback(0, err)
+              } else {
+                size += sizeIn
+              }
+              // Call the callback only after accumulating sizes of all files contained
+              if (fileCount === files.length) {
+                callback(size)
+              }
+            })
+          }
+        }
+      })
+    }
+  })
+}
