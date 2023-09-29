@@ -83,7 +83,7 @@ function promisifiedFsStat(path) {
     })
   })
 }
-const aPath = '/Users1/shripada/projects/test-driven-development/tdd-js/src'
+const aPath = '/Users/shripada/projects/test-driven-development/tdd-js/src'
 
 // If we miss catch and promise is in rejected state, then js will raise an exception for us.
 promisifiedFsStat(aPath)
@@ -178,3 +178,106 @@ promiseAll([
     console.log(values)
   })
   .catch((error) => console.log(error))
+
+// To implementation of  Promise.all
+// Problem of composing or piping the promises.
+// Promise.all ==> [resolved1, resolved2.....resolved-n]
+
+// p1, p2
+
+function pipePromises(p1, p2) {
+  return p1.then((resolved1) => {
+    return p2.then((resolved2) => [resolved1, resolved2])
+  })
+}
+const p1 = Promise.resolve(0)
+const p2 = Promise.resolve(1)
+const piped = pipePromises(p1, p2)
+piped.then((combined) => console.log(combined)) // [0,1]
+
+function pipePromises1(...promises) {
+  let accumulated = Promise.resolve([])
+  for (let promise of promises) {
+    accumulated = accumulated.then((accumulatedValues) => {
+      // get the resolved value of current promise, and return new values that has the current resolved
+      // value appended
+      return promise.then((currentValue) => [
+        ...accumulatedValues,
+        currentValue,
+      ])
+    })
+  }
+  return accumulated
+}
+
+const p3 = Promise.resolve('Good')
+pipePromises1(p1, p2, p3)
+  .then((values) => console.log('piped promise values: ', values))
+  .catch((error) => console.log('Piped error: ', error))
+
+function pipePromises1UsingReduce(...promises) {
+  return promises.reduce((accumulatedPromise, currentPromise) => {
+    return accumulatedPromise.then((accumulatedPromiseValues) => {
+      return currentPromise.then((currentPromiseValue) => [
+        ...accumulatedPromiseValues,
+        currentPromiseValue,
+      ])
+    })
+  }, Promise.resolve([]))
+}
+
+pipePromises1UsingReduce(p1, p2, p3)
+  .then((values) =>
+    console.log('piped promise values (reduce version): ', values),
+  )
+  .catch((error) => console.log('Piped error (reduce): ', error))
+
+// Fetch profile information of 1000 users
+const profileIds = []
+for (let i = 0; i < 1000; i++) {
+  profileIds.push(i)
+}
+
+const baseURL = 'https://swapi.dev/api/people/'
+// This is going to create all 1000 promises in one shot.
+// this is going to put huge load on network layer
+// and overall perfromance of app is going to degrade.
+
+function fetchProfile(id){
+  return fetch(`baseURL/${id}`).then((response) => response.json())
+}
+const profilePromises = profileIds.map((id) =>
+fetchProfile(id)
+)
+Promise.all(profilePromises).then((profiles) => {
+  // process those profiles.
+})
+
+// natural solution is to batch promises.
+// We need to first have batches of the profile ids
+function createBatchesOfProfileIds(ids, batchSize) {
+  // create an array of batches
+  // [[id1, id2, id3 ], [id4, id5, id6], ...]
+  const result = []
+  for (let i = 0; i < ids.length; i++) {
+    // Should we start a new batch?
+    if (i % batchSize === 0) {
+      result.push([ids[i]])
+    } else {
+      // insert this item to the most recent batch.
+      const lastBatch = result[result.length-1];
+      lastBatch.push(ids[i]);
+    }
+  }
+
+  return result; //[[0,1,2], [3,4,5], [6,7,8]...] if batch size is 3
+}
+
+const batchedProfileIds = createBatchesOfProfileIds(profileIds, 5);
+
+
+// Now we need to create promises for each batch only after the previous batch has finished.
+for(let i=0; i< batchedProfileIds.length; i++){
+   const batchOfIds = batchedProfileIds[i];
+   const batchedPromises = batch.map(id =>)
+}
